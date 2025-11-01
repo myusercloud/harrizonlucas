@@ -10,13 +10,12 @@ const Hero = () => {
       {/* Left: Text */}
       <div className="md:w-1/2 space-y-6 text-center md:text-left">
         <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
-          <span className="block text-gray-300">Hi, I’m<span className="block text-teal-400">Harrizon</span></span>
+          <span className="block text-gray-300">I’m<span className="block text-teal-400">Harrizon</span></span>
           
-          <span className="block text-gray-300">Developer + Data Scientist</span>
+          <span className="block text-gray-300">Developer & Data Scientist</span>
         </h1>
         <p className="text-gray-400 text-lg max-w-md mx-auto md:mx-0">
-          I build visually appealing and efficient digital experiences that
-          merge design precision with engineering logic.
+          I build intelligent systems that turn raw data into real-world impact
         </p>
         <div className="flex justify-center md:justify-start space-x-4">
           <a
