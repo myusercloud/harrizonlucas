@@ -17,8 +17,8 @@ const techs = [
 
 const TechStack = () => {
   return (
-    <section className="py-16 bg-gray-50 text-center">
-      <h2 className="text-3xl font-bold mb-10 text-gray-800">Tech Stack</h2>
+    <section className="py-16 bg- text-center">
+      <h2 className="text-3xl font-bold mb-10 text-white-800">Tech Stack</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 justify-items-center">
         {techs.map((tech, index) => (
           <div
@@ -26,7 +26,7 @@ const TechStack = () => {
             className="flex flex-col items-center transition-transform hover:scale-110"
           >
             {tech.icon}
-            <p className="mt-2 text-sm font-medium text-gray-700">{tech.name}</p>
+            <p className="mt-2 text-sm font-medium text-700">{tech.name}</p>
           </div>
         ))}
       </div>

@@ -4,10 +4,12 @@ import ProjectsPreview from "../components/ProjectsPreview";
 import SocialLinks from "../components/SocialLinks";
 import Footer from "../components/Footer";
 import TechStack from "../components/TechStach";
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   return (
     <div className="bg-gray-950 text-gray-100 min-h-screen flex flex-col">
+      <Navbar />  
       <Hero />
       <About />
       <TechStack/>
