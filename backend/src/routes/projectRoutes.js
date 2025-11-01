@@ -1,8 +1,28 @@
-import express from 'express';
-import { createProject } from '../controllers/projectController.js';
+import express from 'express'
+import {
+  createProject,
+  getAllProjects,
+  getProjectBySlug,
+  updateProject,
+  deleteProject,
+} from '../controllers/projectController.js'
 
-const router = express.Router();
+const router = express.Router()
 
-router.post('/', createProject);
+// ---------- ROUTES ----------
+// Create a new project
+router.post('/', createProject)
 
-export default router;
+// Get all projects
+router.get('/', getAllProjects)
+
+// Get single project by slug
+router.get('/:slug', getProjectBySlug)
+
+// Update a project by slug
+router.put('/:slug', updateProject)
+
+// Delete a project by slug
+router.delete('/:slug', deleteProject)
+
+export default router
