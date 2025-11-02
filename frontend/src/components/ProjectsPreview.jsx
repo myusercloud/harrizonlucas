@@ -5,11 +5,26 @@ const ProjectsPreview = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/projects")
-      .then((res) => res.json())
-      .then((data) => setProjects(data))
-      .catch((err) => console.error("Error fetching projects:", err));
-  }, []);
+  const fetchProjects = async () => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/projects`);
+      const data = await res.json();
+
+      if (Array.isArray(data)) {
+        setProjects(data);
+      } else {
+        console.error("Unexpected data:", data);
+        setProjects([]);
+      }
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setProjects([]);
+    }
+  };
+
+  fetchProjects();
+}, []);
+
 
   return (
     <section id="projects" className="py-20 px-6 bg-gray-950">
@@ -30,7 +45,7 @@ const ProjectsPreview = () => {
               rel="noreferrer"
               className="text-blue-400 hover:text-blue-300 text-sm"
             >
-              View Project →
+              View Project in Github →
             </a>
           </div>
         ))}

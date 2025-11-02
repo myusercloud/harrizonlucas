@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   portfolio_db:
     image: postgres:15
@@ -29,6 +27,17 @@ services:
       - ./backend:/app
     working_dir: /app
     command: ["npm", "run", "dev"]
+
+  portfolio_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: portfolio_frontend
+    restart: always
+    ports:
+      - "5173:80"
+    depends_on:
+      - portfolio_backend
 
 volumes:
   pgdata:
