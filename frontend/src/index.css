@@ -7,6 +7,11 @@ body {
   @apply bg-[#0a192f] text-[#ccd6f6] font-sans leading-relaxed selection:bg-accent/30 selection:text-accent;
 }
 
+main {
+  overflow-x: hidden;
+}
+
+
 /* 💬 Typography tweaks */
 h1, h2, h3, h4 {
   @apply font-bold text-[#e6f1ff];

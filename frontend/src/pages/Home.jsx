@@ -1,23 +1,25 @@
-import Hero from "../components/Hero";
+import LeftPanel from "../components/LeftPanel";
 import About from "../components/About";
-import ProjectsPreview from "../components/ProjectsPreview";
-import SocialLinks from "../components/SocialLinks";
-import Footer from "../components/Footer";
 import TechStack from "../components/TechStack";
-import Navbar from "../components/Navbar";
-import Contact from "../components/contact";
+import ProjectsPreview from "../components/ProjectsPreview";
+import Contact from "../components/Contact";
+import Footer from "../components/Footer";
 
 const Home = () => {
   return (
-      <>
-        <Navbar />
-        <Hero />
+    <div className="flex">
+      {/* Left fixed panel */}
+      <LeftPanel />
+
+      {/* Right scrollable content */}
+      <main className="md:ml-[35%] w-full">
         <About />
         <TechStack />
         <ProjectsPreview />
         <Contact />
         <Footer />
-      </>
+      </main>
+    </div>
   );
 };
 

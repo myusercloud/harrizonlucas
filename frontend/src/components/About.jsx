@@ -5,15 +5,13 @@ import profile from "../assets/profile.png";
 
 const About = () => {
   return (
-    <section id="about" className="py-24 flex flex-col items-center px-6">
+    <section id="about" className="py-24 px-6 w-full">
+
       <SectionTitle title="About Me" />
-      <div className="max-w-5xl mt-10 flex flex-col md:flex-row gap-10 items-center">
+      <div className="max-w-5xl mt-10 flex flex-col md:flex-row gap-10">
+
         <MotionFadeIn direction="left" className="flex-1">
-          <img
-            src={profile}
-            alt="Profile"
-            className="w-64 h-64 object-cover rounded-2xl shadow-lg"
-          />
+          
         </MotionFadeIn>
 
         <MotionFadeIn direction="right" className="flex-1 text-center md:text-left">
