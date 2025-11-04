@@ -3,7 +3,7 @@ import About from "../components/About";
 import ProjectsPreview from "../components/ProjectsPreview";
 import SocialLinks from "../components/SocialLinks";
 import Footer from "../components/Footer";
-import TechStack from "../components/TechStach";
+import TechStack from "../components/TechStack";
 import Navbar from "../components/Navbar";
 import Contact from "../components/contact";
 
@@ -16,7 +16,6 @@ const Home = () => {
         <TechStack />
         <ProjectsPreview />
         <Contact />
-        <SocialLinks />
         <Footer />
       </>
   );

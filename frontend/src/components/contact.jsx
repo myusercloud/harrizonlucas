@@ -1,20 +1,28 @@
-// src/components/Footer.jsx
+import React from "react";
+import SectionTitle from "./ui/sectionTitle";
+import MotionFadeIn from "./ui/MotionFadeIn";
+import Button from "./ui/Button";
+import { FiMail } from "react-icons/fi";
+
 const Contact = () => {
   return (
-    // In Home.jsx after Projects, before Footer
-<section id="contact" className="py-20 px-6 text-center">
-  <h2 className="text-3xl font-semibold mb-4">Get In Touch</h2>
-  <p className="text-lightText/70 mb-6">
-    I'm open to collaborations, full-time work, or just a chat. Reach out.
-  </p>
-  <a
-    href="mailto:youremail@example.com"
-    className="px-8 py-3 bg-accent text-dark rounded-lg"
-  >
-    Say Hello
-  </a>
-</section>
-
+    <section id="contact" className="py-24 px-6 text-center">
+      <SectionTitle title="Contact" />
+      <MotionFadeIn direction="up" className="max-w-xl mx-auto mt-10">
+        <p className="text-lightText/70 text-lg">
+          I’m always open to collaboration, freelance opportunities, or just a
+          good dev conversation. Drop me a message and let’s connect.
+        </p>
+        <Button
+          href="mailto:harrizon@example.com"
+          variant="solid"
+          icon={FiMail}
+          className="mt-8"
+        >
+          Send Email
+        </Button>
+      </MotionFadeIn>
+    </section>
   );
 };
 

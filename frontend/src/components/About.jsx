@@ -1,16 +1,34 @@
-// src/components/About.jsx
+import React from "react";
+import MotionFadeIn from "./ui/MotionFadeIn";
+import SectionTitle from "./ui/sectionTitle";
+import profile from "../assets/profile.png";
+
 const About = () => {
   return (
-    <section
-      id="about"
-      className="py-20 max-w-4xl mx-auto px-6 text-center bg-transparent"
-    >
-      <h2 className="text-3xl font-semibold mb-6">About Me</h2>
-      <p className="text-gray-400 leading-relaxed">
-        I’m a passionate developer who loves building clean, scalable full-stack
-        apps that merge functionality with design. My current focus is on
-        crafting modern web experiences using React, Node.js, and PostgreSQL.
-      </p>
+    <section id="about" className="py-24 flex flex-col items-center px-6">
+      <SectionTitle title="About Me" />
+      <div className="max-w-5xl mt-10 flex flex-col md:flex-row gap-10 items-center">
+        <MotionFadeIn direction="left" className="flex-1">
+          <img
+            src={profile}
+            alt="Profile"
+            className="w-64 h-64 object-cover rounded-2xl shadow-lg"
+          />
+        </MotionFadeIn>
+
+        <MotionFadeIn direction="right" className="flex-1 text-center md:text-left">
+          <p className="text-lightText/80 text-lg leading-relaxed">
+            I’m Harrizon, a full-stack developer who loves clean design,
+            purposeful code, and building solutions that actually make sense.
+            I work with <span className="text-accent font-semibold">React, Node with Express, and Postgres</span> —
+            focusing on performance, maintainability, and elegance in every project.
+          </p>
+          <p className="mt-4 text-lightText/70">
+            I thrive at the intersection of logic and creativity — crafting UIs
+            that feel natural while ensuring solid backend architecture.
+          </p>
+        </MotionFadeIn>
+      </div>
     </section>
   );
 };
