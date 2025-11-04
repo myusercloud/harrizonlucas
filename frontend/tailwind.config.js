@@ -1,9 +1,19 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
+module.exports = {
+  content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        dark: "#0a192f",
+        dark2: "#112240",
+        lightText: "#e6f1ff",
+        accent: "#64ffda"
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"]
+      }
+    }
   },
   plugins: [],
-}
+};
+
 
