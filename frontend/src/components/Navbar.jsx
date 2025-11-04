@@ -1,18 +1,32 @@
-import React from "react";
+// src/components/Navbar.jsx
+import { useEffect, useState } from "react";
+import { Link as ScrollLink } from "react-scroll"; // or your scroll logic
 
 const Navbar = () => {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const handler = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handler);
+    return () => window.removeEventListener("scroll", handler);
+  }, []);
+
   return (
-    <nav className="fixed top-0 w-full bg-gray-900 text-white shadow-lg z-50">
-      <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-6">
-        <h1 className="text-2xl font-bold tracking-tight">Harrizon.dev</h1>
-        <ul className="hidden md:flex space-x-8 text-sm font-medium">
-          <li><a href="#home" className="hover:text-teal-400">Home</a></li>
-          <li><a href="#about" className="hover:text-teal-400">About</a></li>
-          <li><a href="#projects" className="hover:text-teal-400">Projects</a></li>
-          <li><a href="#stack" className="hover:text-teal-400">Tech Stack</a></li>
-          <li><a href="#contact" className="hover:text-teal-400">Contact</a></li>
-        </ul>
-        <button className="md:hidden bg-teal-500 px-3 py-2 rounded text-sm">Menu</button>
+    <nav
+      className={`fixed w-full z-50 transition-all ${
+        scrolled
+          ? "bg-dark2 bg-opacity-90 backdrop-blur-md"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-4xl mx-auto flex justify-between p-6">
+        <div className="text-accent font-bold">HM</div>
+        <div className="space-x-8 text-lightText">
+          <ScrollLink to="about" smooth>About</ScrollLink>
+          <ScrollLink to="projects" smooth>Projects</ScrollLink>
+          <ScrollLink to="contact" smooth>Contact</ScrollLink>
+        </div>
       </div>
     </nav>
   );
