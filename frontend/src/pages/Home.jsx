@@ -8,15 +8,13 @@ import Navbar from "../components/Navbar";
 
 const Home = () => {
   return (
-    <div className="bg-gray-950 text-gray-100 min-h-screen flex flex-col">
-      <Navbar />  
-      <Hero />
-      <About />
-      <TechStack/>
-      <ProjectsPreview />
-      <SocialLinks />
-      <Footer />
-    </div>
+      <>
+        <Navbar />
+        <Hero />
+        <About />
+        <ProjectsPreview />
+        <Footer />
+      </>
   );
 };
 
