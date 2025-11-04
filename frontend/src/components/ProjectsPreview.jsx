@@ -1,5 +1,6 @@
 // src/components/ProjectsPreview.jsx
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 const ProjectsPreview = () => {
   const [projects, setProjects] = useState([]);
@@ -27,27 +28,32 @@ const ProjectsPreview = () => {
 
 
   return (
-    <section id="projects" className="py-20 px-6 bg-gray-950">
+    <section id="projects" className="py-20 px-6 max-w-4xl mx-auto">
       <h2 className="text-3xl font-semibold text-center mb-10">Projects</h2>
-      <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        {projects.map((project) => (
-          <div
+      <div className="grid md:grid-cols-2 gap-8">
+        {projects.map((project, i) => (
+          <motion.div
             key={project.id}
-            className="p-6 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 hover:border-blue-500 transition"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="p-6 bg-dark2 rounded-lg border border-lightText/10 hover:border-accent transition"
           >
-            <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-            <p className="text-gray-400 text-sm mb-3 line-clamp-3">
-              {project.description}
-            </p>
-            <a
-              href={project.link || "#"}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-400 hover:text-blue-300 text-sm"
-            >
-              View Project in Github →
-            </a>
-          </div>
+            <h3 className="text-xl font-semibold mb-2 text-lightText">
+              {project.title}
+            </h3>
+            <p className="text-lightText/70 mb-4">{project.description}</p>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noreferrer"
+                className="text-accent hover:underline text-sm"
+              >
+                Visit →  
+              </a>
+            )}
+          </motion.div>
         ))}
       </div>
     </section>

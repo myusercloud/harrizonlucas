@@ -3,45 +3,29 @@ import heroImage from "../assets/profile.png"; // replace with your image
 
 const Hero = () => {
   return (
-    <section
-      id="home"
-      className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gray-800 text-white px-6 md:px-16 pt-20"
+    <section className="min-h-screen flex flex-col justify-center items-center text-center px-6">
+  <h1 className="text-5xl md:text-6xl font-bold">
+    Harrizon <span className="text-accent">Mutuma</span>
+  </h1>
+  <p className="mt-4 text-lg md:text-xl text-lightText/70 max-w-xl">
+    I build clean full-stack apps. Node, React, Postgres — shipped with integrity.
+  </p>
+  <div className="mt-8 flex gap-6">
+    <a
+      href="#projects"
+      className="px-6 py-3 bg-accent text-dark rounded-lg"
     >
-      {/* Left: Text */}
-      <div className="md:w-1/2 space-y-6 text-center md:text-left">
-        <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
-          <span className="block text-gray-300">I’m<span className="block text-teal-400">Harrizon</span></span>
-          
-          <span className="block text-gray-300">Developer & Data Scientist</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-md mx-auto md:mx-0">
-          I build intelligent systems that turn raw data into real-world impact
-        </p>
-        <div className="flex justify-center md:justify-start space-x-4">
-          <a
-            href="#projects"
-            className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-full font-medium transition"
-          >
-            View Projects
-          </a>
-          <a
-            href="#contact"
-            className="border border-teal-500 text-teal-400 hover:bg-teal-500 hover:text-white px-6 py-3 rounded-full font-medium transition"
-          >
-            Contact Me
-          </a>
-        </div>
-      </div>
+      View Work
+    </a>
+    <a
+      href="/resume.pdf"
+      className="px-6 py-3 border border-accent text-accent rounded-lg hover:bg-accent/10"
+    >
+      Resume
+    </a>
+  </div>
+</section>
 
-      {/* Right: Image */}
-      <div className="md:w-1/2 flex justify-center mt-10 md:mt-0">
-        <img
-          src={heroImage}
-          alt="Harrizon"
-          className="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover shadow-[0_0_40px_-10px_rgba(20,200,200,0.6)]"
-        />
-      </div>
-    </section>
   );
 };
 
