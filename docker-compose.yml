@@ -24,7 +24,8 @@ services:
     depends_on:
       - portfolio_db
     volumes:
-      - ./backend:/app
+      - ./backend:/app                # Mount backend source
+      - /app/node_modules             # Prevent node_modules from being overwritten
     working_dir: /app
     command: ["npm", "run", "dev"]
 
@@ -35,9 +36,16 @@ services:
     container_name: portfolio_frontend
     restart: always
     ports:
-      - "5173:80"
+      - "5173:5173"
     depends_on:
       - portfolio_backend
+    volumes:
+      - ./frontend:/app               # Mount frontend source code
+      - /app/node_modules             # Ignore node_modules from host
+    working_dir: /app
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    environment:
+      - CHOKIDAR_USEPOLLING=true      # ensures file watching works inside Docker
 
 volumes:
   pgdata:

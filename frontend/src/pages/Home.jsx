@@ -5,6 +5,7 @@ import SocialLinks from "../components/SocialLinks";
 import Footer from "../components/Footer";
 import TechStack from "../components/TechStach";
 import Navbar from "../components/Navbar";
+import Contact from "../components/contact";
 
 const Home = () => {
   return (
@@ -12,7 +13,10 @@ const Home = () => {
         <Navbar />
         <Hero />
         <About />
+        <TechStack />
         <ProjectsPreview />
+        <Contact />
+        <SocialLinks />
         <Footer />
       </>
   );
