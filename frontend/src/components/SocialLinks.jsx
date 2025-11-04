@@ -1,36 +1,27 @@
-// src/components/SocialLinks.jsx
-import { FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
+import React from "react";
+import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
+
+const socials = [
+  { icon: <FaGithub size={22} />, link: "https://github.com/harrizon" },
+  { icon: <FaLinkedin size={22} />, link: "https://linkedin.com/in/harrizon" },
+  { icon: <FaTwitter size={22} />, link: "https://twitter.com/harrizon" },
+];
 
 const SocialLinks = () => {
   return (
-    <section className="py-10 text-center bg-transparent">
-      <div className="flex justify-center gap-6 text-2xl">
+    <div className="flex gap-6 justify-center mt-6">
+      {socials.map((social, i) => (
         <a
-          href="https://github.com/myusercloud"
+          key={i}
+          href={social.link}
           target="_blank"
-          rel="noreferrer"
-          className="hover:text-blue-500 transition"
+          rel="noopener noreferrer"
+          className="text-lightText/70 hover:text-accent transition-all"
         >
-          <FaGithub />
+          {social.icon}
         </a>
-        <a
-          href="https://linkedin.com/in/harrizon-lucas"
-          target="_blank"
-          rel="noreferrer"
-          className="hover:text-blue-500 transition"
-        >
-          <FaLinkedin />
-        </a>
-        <a
-          href="https://instagram.com/the.harrizon"
-          target="_blank"
-          rel="noreferrer"
-          className="hover:text-blue-500 transition"
-        >
-          <FaInstagram />
-        </a>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 };
 

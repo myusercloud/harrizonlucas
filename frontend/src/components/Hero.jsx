@@ -1,46 +1,101 @@
-import React from "react";
-import heroImage from "../assets/profile.png"; // replace with your image
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import heroImage from "../assets/profile.png";
 
 const Hero = () => {
+  const navLinks = [
+    { name: "About", href: "#about" },
+    { name: "Tech Stack", href: "#TechStack" },
+    { name: "Projects", href: "#projects" },
+    { name: "Contact", href: "#contact" },
+  ];
+
+  const [active, setActive] = useState("");
+
+  // Track which section is active
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + window.innerHeight / 3;
+      let current = "";
+      navLinks.forEach(({ href }) => {
+        const section = document.querySelector(href);
+        if (section && scrollPos >= section.offsetTop) current = href;
+      });
+      setActive(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <section
-      id="home"
-      className="flex flex-col md:flex-row items-center justify-center min-h-screen bg-gray-800 text-white px-6 md:px-16 pt-20"
+      id="hero"
+      className="min-h-screen flex flex-col justify-start items-center text-center px-6 pt-0 gap-6"
     >
-      {/* Left: Text */}
-      <div className="md:w-1/2 space-y-6 text-center md:text-left">
-        <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
-          <span className="block text-gray-300">I’m<span className="block text-teal-400">Harrizon</span></span>
-          
-          <span className="block text-gray-300">Developer & Data Scientist</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-md mx-auto md:mx-0">
-          I build intelligent systems that turn raw data into real-world impact
-        </p>
-        <div className="flex justify-center md:justify-start space-x-4">
-          <a
-            href="#projects"
-            className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-full font-medium transition"
-          >
-            View Projects
-          </a>
-          <a
-            href="#contact"
-            className="border border-teal-500 text-teal-400 hover:bg-teal-500 hover:text-white px-6 py-3 rounded-full font-medium transition"
-          >
-            Contact Me
-          </a>
+      {/* Hero Image */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="relative mt-10"
+      >
+        <div className="rounded-full overflow-hidden w-48 h-48 border-4 border-accent/50 shadow-lg shadow-accent/20 mx-auto">
+          <img
+            src={heroImage}
+            alt="Profile"
+            className="w-full h-full object-cover"
+          />
         </div>
-      </div>
+      </motion.div>
 
-      {/* Right: Image */}
-      <div className="md:w-1/2 flex justify-center mt-10 md:mt-0">
-        <img
-          src={heroImage}
-          alt="Harrizon"
-          className="rounded-full w-64 h-64 md:w-80 md:h-80 object-cover shadow-[0_0_40px_-10px_rgba(20,200,200,0.6)]"
-        />
-      </div>
+      {/* Text */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
+        className="flex flex-col justify-center items-center space-y-4 mt-6"
+      >
+        <p className="text-accent font-mono tracking-wider">Hi, my name is</p>
+        <h1 className="text-5xl font-extrabold">
+          Harrizon <span className="text-accent">Lucas</span>
+        </h1>
+        <h2 className="text-2xl text-lightText/80 font-medium">
+          I build clean, scalable full-stack applications.
+        </h2>
+        <p className="text-lightText/60 max-w-xs">
+          I’m a developer who enjoys crafting performant and accessible web
+          experiences using Node, React, and PostgreSQL.
+        </p>
+
+        
+      </motion.div>
+
+      {/* Bottom Navbar */}
+      <motion.nav
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
+        className="flex flex-col items-center space-y-4 mt-12 mb-10"
+      >
+        {navLinks.map(({ name, href }, i) => (
+          <motion.a
+            key={i}
+            href={href}
+            onClick={() => setActive(href)}
+            className={`font-mono uppercase tracking-widest transition-all ${
+              active === href
+                ? "text-accent text-base font-bold scale-110"
+                : "text-lightText/70 hover:text-accent text-sm"
+            }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {name}
+          </motion.a>
+        ))}
+      </motion.nav>
     </section>
   );
 };
