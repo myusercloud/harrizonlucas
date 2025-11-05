@@ -5,4 +5,9 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 EXPOSE 5000
+
+# Regenerate Prisma client inside container
+RUN npx prisma generate
+
+
 CMD ["npm", "run", "dev"]

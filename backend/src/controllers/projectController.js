@@ -1,9 +1,9 @@
 import prisma from '../utils/prismaClient.js';
 import slugify from 'slugify';
+import path from 'path';
+import fs from 'fs';
 
-
-
-// Create project
+// CREATE project
 export const createProject = async (req, res) => {
   try {
     const { title, description, link } = req.body;
@@ -13,9 +13,10 @@ export const createProject = async (req, res) => {
     }
 
     const slug = slugify(title, { lower: true, strict: true });
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     const project = await prisma.project.create({
-      data: { title, description, link, slug },
+      data: { title, description, link, slug, image: imageUrl },
     });
 
     res.status(201).json({ message: 'Project created successfully', project });
@@ -30,33 +31,28 @@ export const getAllProjects = async (req, res) => {
   try {
     const projects = await prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
-    })
-    res.status(200).json(projects)
+    });
+    res.status(200).json(projects);
   } catch (error) {
-    console.error('Error fetching projects:', error)
+    console.error('Error fetching projects:', error);
     res.status(500).json({ error: error.message });
   }
-}
+};
 
 // GET project by slug
 export const getProjectBySlug = async (req, res) => {
   try {
-    const { slug } = req.params
-    const project = await prisma.project.findUnique({
-      where: { slug },
-    })
+    const { slug } = req.params;
+    const project = await prisma.project.findUnique({ where: { slug } });
 
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' })
-    }
+    if (!project) return res.status(404).json({ error: 'Project not found' });
 
-    res.status(200).json(project)
+    res.status(200).json(project);
   } catch (error) {
-    console.error('Error fetching project:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error('Error fetching project:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-}
-
+};
 
 // UPDATE project
 export const updateProject = async (req, res) => {
@@ -64,13 +60,19 @@ export const updateProject = async (req, res) => {
     const { slug } = req.params;
     const { title, description, link } = req.body;
 
-    // Check if project exists
     const existingProject = await prisma.project.findUnique({ where: { slug } });
-    if (!existingProject) {
-      return res.status(404).json({ error: 'Project not found' });
+    if (!existingProject) return res.status(404).json({ error: 'Project not found' });
+
+    // Delete old image if new one uploaded
+    let imageUrl = existingProject.image;
+    if (req.file) {
+      if (existingProject.image) {
+        const oldPath = path.join('uploads', path.basename(existingProject.image));
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      imageUrl = `/uploads/${req.file.filename}`;
     }
 
-    // Regenerate slug only if title changes
     let newSlug = existingProject.slug;
     if (title && title !== existingProject.title) {
       newSlug = slugify(title, { lower: true, strict: true });
@@ -83,19 +85,16 @@ export const updateProject = async (req, res) => {
         description: description ?? existingProject.description,
         link: link ?? existingProject.link,
         slug: newSlug,
+        image: imageUrl,
       },
     });
 
-    res.status(200).json({
-      message: 'Project updated successfully',
-      project: updatedProject,
-    });
+    res.status(200).json({ message: 'Project updated successfully', project: updatedProject });
   } catch (error) {
     console.error('Error updating project:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
 
 // DELETE project
 export const deleteProject = async (req, res) => {
@@ -103,8 +102,12 @@ export const deleteProject = async (req, res) => {
     const { slug } = req.params;
 
     const project = await prisma.project.findUnique({ where: { slug } });
-    if (!project) {
-      return res.status(404).json({ error: 'Project not found' });
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    // Delete image file if exists
+    if (project.image) {
+      const imgPath = path.join('uploads', path.basename(project.image));
+      if (fs.existsSync(imgPath)) fs.unlinkSync(imgPath);
     }
 
     await prisma.project.delete({ where: { slug } });
