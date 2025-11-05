@@ -9,7 +9,5 @@ EXPOSE 5000
 # Regenerate Prisma client inside container
 RUN npx prisma generate
 
-# Deploy migrations
-RUN npx prisma migrate deploy
 
 CMD ["npm", "run", "dev"]

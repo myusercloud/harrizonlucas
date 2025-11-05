@@ -28,7 +28,8 @@ services:
       - /app/node_modules             # Prevent node_modules from being overwritten
       - ./backend/uploads:/app/uploads
     working_dir: /app
-    command: ["npm", "run", "dev"]
+    command: ["sh", "-c", "./start.sh"]
+
 
   portfolio_frontend:
     build:
