@@ -1,7 +1,14 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import path from "path";
 import projectRoutes from './routes/projectRoutes.js'
+import { fileURLToPath } from "url";
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 dotenv.config()
 
@@ -13,6 +20,9 @@ app.use(express.json()) // parse JSON bodies
 
 // ---------- ROUTES ----------
 app.use('/api/projects', projectRoutes)
+
+// Serve static files from the uploads folder
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Health check / root route
 app.get('/', (req, res) => {

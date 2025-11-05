@@ -10,7 +10,6 @@ const ProjectsPreview = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Replace with your backend endpoint
     fetch("http://localhost:5000/api/projects")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch projects");
@@ -33,24 +32,28 @@ const ProjectsPreview = () => {
   return (
     <section id="projects" className="py-24 px-6 text-center">
       <SectionTitle title="Projects" />
-      <div className="max-w-5xl mx-auto mt-12 grid md:grid-cols-3 gap-10">
+      <div className="max-w-6xl mx-auto mt-12 grid md:grid-cols-3 gap-10">
         {projects.map((project, i) => (
           <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.1}>
-            <div className="bg-dark/40 p-6 rounded-2xl text-left shadow hover:shadow-accent/20 transition-all duration-300 h-full flex flex-col justify-between">
-              <div>
+            <div className="bg-dark2 p-6 rounded-2xl text-left shadow-lg hover:shadow-accent/20 transition-all duration-300 h-full flex flex-col justify-between">
+              
+              {/* Project Image */}
+              {project.image && (
+                <div className="mb-4 overflow-hidden rounded-xl">
+                  <img
+                    src={`http://localhost:5000${project.image}`}
+                    alt={project.title}
+                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+              )}
+
+              {/* Project Info */}
+              <div className="flex-1">
                 <h3 className="text-xl font-semibold text-accent">{project.title}</h3>
-                <p className="mt-2 text-lightText/70">{project.desc}</p>
-                <ul className="flex flex-wrap gap-2 mt-4">
-                  {project.stack?.map((tech, j) => (
-                    <li
-                      key={j}
-                      className="text-xs bg-accent/10 text-accent px-3 py-1 rounded-full"
-                    >
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
+                <p className="mt-2 text-lightText/70">{project.description}</p>
               </div>
+
               <Button
                 href={project.link || "#"}
                 variant="outline"
