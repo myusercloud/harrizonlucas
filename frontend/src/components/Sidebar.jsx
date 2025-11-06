@@ -1,45 +1,38 @@
 // src/components/Sidebar.jsx
-import { FaProjectDiagram, FaImages, FaCogs, FaSignOutAlt } from "react-icons/fa";
+import { LayoutDashboard, BookOpen, Settings as SettingsIcon, Image, } from 'lucide-react';
+
 
 const Sidebar = ({ active, setActive }) => {
-  const menu = [
-    { name: "Projects", icon: <FaProjectDiagram /> },
-    { name: "Gallery", icon: <FaImages /> },
-    { name: "Settings", icon: <FaCogs /> },
-  ];
+    const navItems = [
+        { name: "Projects", icon: BookOpen },
+        { name: "Gallery", icon: Image },
+        { name: "Settings", icon: SettingsIcon },
+    ];
 
-  return (
-    <aside className="w-64 h-screen bg-white/5 backdrop-blur-md border-r border-white/10 flex flex-col p-5">
-      <h2 className="text-2xl font-bold mb-10 text-center">Admin Panel</h2>
-
-      <nav className="flex flex-col gap-3">
-        {menu.map((item) => (
-          <button
-            key={item.name}
-            onClick={() => setActive(item.name)}
-            className={`flex items-center gap-3 px-4 py-2 rounded-lg transition ${
-              active === item.name
-                ? "bg-blue-600 text-white"
-                : "text-gray-400 hover:bg-white/10"
-            }`}
-          >
-            {item.icon}
-            {item.name}
-          </button>
-        ))}
-      </nav>
-
-      <div className="mt-auto">
-        <button
-          onClick={() => alert("Implement logout later")}
-          className="flex items-center gap-3 text-red-400 hover:text-red-300 px-4 py-2"
-        >
-          <FaSignOutAlt />
-          Logout
-        </button>
-      </div>
-    </aside>
-  );
+    return (
+        <div className="w-64 flex flex-col p-6 bg-gray-900 border-r border-gray-800 shadow-xl">
+            <div className="flex items-center text-2xl font-extrabold text-indigo-400 mb-10">
+                <LayoutDashboard className="w-7 h-7 mr-2" />
+                Admin Panel
+            </div>
+            <nav className="space-y-3">
+                {navItems.map((item) => (
+                    <button
+                        key={item.name}
+                        onClick={() => setActive(item.name)}
+                        className={`w-full flex items-center p-3 rounded-xl transition-all duration-200 group ${
+                            active === item.name
+                                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
+                                : "text-gray-400 hover:bg-gray-800 hover:text-indigo-400"
+                        }`}
+                    >
+                        <item.icon className="w-5 h-5 mr-3" />
+                        <span className="font-medium">{item.name}</span>
+                    </button>
+                ))}
+            </nav>
+        </div>
+    );
 };
 
 export default Sidebar;
