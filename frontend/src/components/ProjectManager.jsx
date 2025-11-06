@@ -1,134 +1,238 @@
-// src/components/ProjectManager.jsx
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { FiArrowUpRight, FiEdit2, FiTrash2 } from "react-icons/fi";
+import SectionTitle from "./ui/sectionTitle";
+import MotionFadeIn from "./ui/MotionFadeIn";
+import Button from "./ui/Button";
+import ConfirmationModal from "./ConfirmationModal";
 
 const API_URL = "http://localhost:5000/api/projects";
 
 const ProjectManager = () => {
   const [projects, setProjects] = useState([]);
-  const [form, setForm] = useState({ title: "", description: "", link: "" });
-  const [editing, setEditing] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  const [form, setForm] = useState({ title: "", description: "", link: "", image: "" });
+  const [editing, setEditing] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({});
+
+  // Fetch all projects
   const fetchProjects = async () => {
-    const res = await axios.get(API_URL);
-    setProjects(res.data);
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to fetch projects");
+      const data = await res.json();
+      setProjects(data);
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
+  // Handle form input changes
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // Reset form
+  const resetForm = () => {
+    setEditing(null);
+    setForm({ title: "", description: "", link: "", image: "" });
+  };
+
+  // Submit form (Create / Update)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (editing) {
-        await axios.put(`${API_URL}/${editing.slug}`, form);
-      } else {
-        await axios.post(API_URL, form);
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("link", form.link || "");
+      if (form.image && typeof form.image !== "string") {
+        formData.append("image", form.image); // only append if it's a new file
       }
-      setForm({ title: "", description: "", link: "" });
-      setEditing(null);
+
+      const method = editing ? "PUT" : "POST";
+      const url = editing ? `${API_URL}/${editing.slug}` : API_URL;
+
+      const res = await fetch(url, { method, body: formData });
+      if (!res.ok) throw new Error("Failed to save project");
+
+      resetForm();
       fetchProjects();
     } catch (err) {
-      alert("Error saving project");
+      setModalContent({
+        title: "Error",
+        message: err.message,
+        confirmText: "Close",
+        onConfirm: () => setModalOpen(false),
+        isAlert: true,
+      });
+      setModalOpen(true);
     }
   };
 
-  const handleDelete = async (slug) => {
-    if (!confirm("Delete this project?")) return;
-    try {
-      await axios.delete(`${API_URL}/${slug}`);
-      fetchProjects();
-    } catch (err) {
-      alert("Error deleting project");
-    }
+  // Delete project
+  const handleDelete = (project) => {
+    setModalContent({
+      title: "Confirm Deletion",
+      message: `Are you sure you want to delete "${project.title}"?`,
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      confirmStyle: "bg-red-600 hover:bg-red-700",
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`${API_URL}/${project.slug}`, { method: "DELETE" });
+          if (!res.ok) throw new Error("Delete failed");
+          fetchProjects();
+          setModalOpen(false);
+        } catch (err) {
+          setModalContent({
+            title: "Error",
+            message: err.message,
+            confirmText: "Close",
+            onConfirm: () => setModalOpen(false),
+            isAlert: true,
+          });
+          setModalOpen(true);
+        }
+      },
+      onCancel: () => setModalOpen(false),
+    });
+    setModalOpen(true);
   };
+
+  // Edit project
+  const handleEdit = (project) => {
+    setEditing(project);
+    setForm({
+      title: project.title,
+      description: project.description,
+      link: project.link,
+      image: project.image || "",
+    });
+  };
+
+  if (loading) return <p className="text-center mt-12">Loading projects...</p>;
+  if (error) return <p className="text-center mt-12 text-red-500">{error}</p>;
 
   return (
-    <div className="flex-1 p-8 overflow-y-auto">
-      <h1 className="text-3xl font-bold mb-8">Manage Projects</h1>
+    <section className="py-12 px-6">
+      <SectionTitle title="Project Manager" />
 
+      {/* Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white/5 border border-white/10 backdrop-blur-md p-6 rounded-xl max-w-xl mb-10"
+        className="max-w-3xl mx-auto bg-gray-800 p-6 rounded-2xl mb-12 shadow-xl space-y-4"
       >
+        <h2 className="text-xl font-semibold text-indigo-400">
+          {editing ? "Edit Project" : "Create New Project"}
+        </h2>
+
         <input
           type="text"
+          name="title"
           placeholder="Title"
-          className="w-full mb-3 p-2 bg-transparent border border-white/20 rounded-lg"
           value={form.title}
-          onChange={(e) => setForm({ ...form, title: e.target.value })}
+          onChange={handleChange}
           required
+          className="w-full p-3 rounded-lg bg-gray-700 text-white"
         />
         <textarea
+          name="description"
           placeholder="Description"
-          className="w-full mb-3 p-2 bg-transparent border border-white/20 rounded-lg"
           value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          required
+          onChange={handleChange}
+          rows={4}
+          className="w-full p-3 rounded-lg bg-gray-700 text-white"
         />
         <input
           type="url"
-          placeholder="Project Link"
-          className="w-full mb-3 p-2 bg-transparent border border-white/20 rounded-lg"
+          name="link"
+          placeholder="Project Link (optional)"
           value={form.link}
-          onChange={(e) => setForm({ ...form, link: e.target.value })}
+          onChange={handleChange}
+          className="w-full p-3 rounded-lg bg-gray-700 text-white"
+        />
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+          className="w-full p-3 rounded-lg bg-gray-700 text-white"
         />
 
-        <button
-          type="submit"
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
-        >
-          {editing ? "Update" : "Create"}
-        </button>
-
-        {editing && (
-          <button
-            type="button"
-            onClick={() => {
-              setEditing(null);
-              setForm({ title: "", description: "", link: "" });
-            }}
-            className="ml-3 px-6 py-2 bg-gray-700 hover:bg-gray-800 rounded-lg"
-          >
-            Cancel
-          </button>
+        {/* Image Preview */}
+        {form.image && typeof form.image !== "string" && (
+          <img
+            src={URL.createObjectURL(form.image)}
+            alt="Preview"
+            className="mb-4 rounded-xl h-48 object-cover"
+          />
         )}
+
+        <div className="flex gap-4">
+          <Button type="submit">{editing ? "Update Project" : "Create Project"}</Button>
+          {editing && (
+            <button type="button" onClick={resetForm} className="px-6 py-2 rounded-lg bg-gray-600 text-white">
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {projects.map((p) => (
-          <div
-            key={p.id}
-            className="p-5 bg-white/5 border border-white/10 backdrop-blur-md rounded-xl"
-          >
-            <h3 className="text-lg font-semibold mb-2">{p.title}</h3>
-            <p className="text-gray-400 mb-3 text-sm">{p.description}</p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setEditing(p);
-                  setForm({
-                    title: p.title,
-                    description: p.description,
-                    link: p.link,
-                  });
-                }}
-                className="text-blue-400 hover:text-blue-300 text-sm"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(p.slug)}
-                className="text-red-400 hover:text-red-300 text-sm"
-              >
-                Delete
-              </button>
+      {/* Projects Grid */}
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+        {projects.map((project, i) => (
+          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.05}>
+            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-between h-full">
+              {project.image && (
+                <img src={`http://localhost:5000${project.image}`} alt={project.title} className="mb-4 rounded-xl h-48 object-cover" />
+              )}
+
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold text-indigo-400">{project.title}</h3>
+                <p className="mt-2 text-gray-300">{project.description}</p>
+              </div>
+
+              <div className="mt-4 flex justify-between items-center">
+                <Button href={project.link || "#"} icon={FiArrowUpRight} variant="outline">
+                  View
+                </Button>
+                <div className="flex gap-2">
+                  <button onClick={() => handleEdit(project)} className="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700">
+                    <FiEdit2 />
+                  </button>
+                  <button onClick={() => handleDelete(project)} className="p-2 bg-red-600 rounded-lg text-white hover:bg-red-700">
+                    <FiTrash2 />
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </MotionFadeIn>
         ))}
       </div>
-    </div>
+
+      <ConfirmationModal
+        isOpen={modalOpen}
+        title={modalContent.title}
+        message={modalContent.message}
+        onConfirm={modalContent.onConfirm}
+        onCancel={modalContent.onCancel}
+        confirmText={modalContent.confirmText}
+        cancelText={modalContent.cancelText}
+        isAlert={modalContent.isAlert}
+        confirmStyle={modalContent.confirmStyle}
+      />
+    </section>
   );
 };
 
