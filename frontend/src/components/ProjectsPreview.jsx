@@ -16,8 +16,8 @@ const ProjectsPreview = () => {
         return res.json();
       })
       .then((data) => {
-        setProjects(data);
-        setLoading(false);
+        setProjects(data); 
+        setLoading(false);  
       })
       .catch((err) => {
         console.error(err);
