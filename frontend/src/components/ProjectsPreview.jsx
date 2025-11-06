@@ -30,38 +30,45 @@ const ProjectsPreview = () => {
   if (error) return <p className="text-center mt-12 text-red-500">{error}</p>;
 
   return (
-    <section id="projects" className="py-24 px-6 text-center">
+    <section id="projects" className="py-20 px-4 sm:px-6 text-left">
       <SectionTitle title="Projects" />
-      <div className="max-w-6xl mx-auto mt-12 grid md:grid-cols-3 gap-10">
+
+      <div className="max-w-3xl mt-10 flex flex-col gap-8">
         {projects.map((project, i) => (
-          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.1}>
-            <div className="bg-dark2 p-6 rounded-2xl text-left shadow-lg hover:shadow-accent/20 transition-all duration-300 h-full flex flex-col justify-between">
+          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.08}>
+            <div className="group flex flex-col sm:flex-row items-start gap-4 border-b border-gray-800 pb-6 hover:opacity-90 transition-all duration-300">
               
-              {/* Project Image */}
+              {/* Image */}
               {project.image && (
-                <div className="mb-4 overflow-hidden rounded-xl">
+                <div className="w-full sm:w-1/5 md:w-1/6 overflow-hidden rounded-md flex-shrink-0">
                   <img
                     src={`http://localhost:5000${project.image}`}
                     alt={project.title}
-                    className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
+                    className="object-cover w-full h-20 sm:h-24 md:h-24 rounded-md transition duration-500"
                   />
                 </div>
               )}
 
-              {/* Project Info */}
+              {/* Info */}
               <div className="flex-1">
-                <h3 className="text-xl font-semibold text-accent">{project.title}</h3>
-                <p className="mt-2 text-lightText/70">{project.description}</p>
-              </div>
+                <h3 className="text-base font-semibold text-green-400 group-hover:text-green-300 transition-colors duration-300">
+                  {project.title}
+                </h3>
+                <p className="mt-1 text-gray-400 text-sm leading-snug line-clamp-2">
+                  {project.description}
+                </p>
 
-              <Button
-                href={project.link || "#"}
-                variant="outline"
-                icon={FiArrowUpRight}
-                className="mt-6 self-start"
-              >
-                View Project
-              </Button>
+                <div className="mt-2">
+                  <Button
+                    variant="link"
+                    icon={FiArrowUpRight}
+                    className="text-xs text-white-400  hover:underline py-1 px-2"
+                    onClick={() => window.open(project.link || "#", "_blank")}
+                  >
+                    View Project
+                  </Button>
+                </div>
+              </div>
             </div>
           </MotionFadeIn>
         ))}
