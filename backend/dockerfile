@@ -4,10 +4,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
+
+# Make start.sh executable
+RUN chmod +x ./start.sh
+
 EXPOSE 5000
 
 # Regenerate Prisma client inside container
 RUN npx prisma generate
 
-
-CMD ["npm", "run", "dev"]
+CMD ["sh", "-c", "./start.sh"]
