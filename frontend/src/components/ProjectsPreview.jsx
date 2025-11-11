@@ -33,7 +33,7 @@ const ProjectsPreview = () => {
     <section id="projects" className="py-20 px-4 sm:px-6 text-left">
       <SectionTitle title="Projects" />
 
-      <div className="max-w-3xl mt-10 flex flex-col gap-8">
+      <div className="max-w-6xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
         {projects.map((project, i) => (
           <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.08}>
             <div className="group flex flex-col sm:flex-row items-start gap-4 border-b border-gray-800 pb-6 hover:opacity-90 transition-all duration-300">
