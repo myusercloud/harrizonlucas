@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import heroImage from "../assets/profile.png";
+import heroImage2 from "../assets/myimage.jpg";
+
 
 const Hero = () => {
   const navLinks = [
@@ -43,7 +45,7 @@ const Hero = () => {
       >
         <div className="rounded-full overflow-hidden w-48 h-48 border-4 border-accent/50 shadow-lg shadow-accent/20 mx-auto">
           <img
-            src={heroImage}
+            src={heroImage2}
             alt="Profile"
             className="w-full h-full object-cover"
           />
