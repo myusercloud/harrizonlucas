@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import heroImage from "../assets/profile.png";
 import heroImage2 from "../assets/myimage.jpg";
-
 
 const Hero = () => {
   const navLinks = [
@@ -14,14 +12,14 @@ const Hero = () => {
 
   const [active, setActive] = useState("");
 
-  // Track which section is active
+  // Track active section
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPos = window.scrollY + window.innerHeight / 3;
+      const pos = window.scrollY + window.innerHeight / 3;
       let current = "";
       navLinks.forEach(({ href }) => {
-        const section = document.querySelector(href);
-        if (section && scrollPos >= section.offsetTop) current = href;
+        const el = document.querySelector(href);
+        if (el && pos >= el.offsetTop) current = href;
       });
       setActive(current);
     };
@@ -34,68 +32,80 @@ const Hero = () => {
   return (
     <section
       id="hero"
-      className="min-h-screen flex flex-col justify-start items-center text-center px-6 pt-0 gap-6"
+      className="
+        w-full px-6 py-12
+        flex flex-col items-center text-center 
+        md:fixed md:left-0 md:top-0 md:h-screen md:w-[40%]
+        md:justify-center md:text-left
+      "
     >
-      {/* Hero Image */}
+      {/* IMAGE */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1, ease: "easeOut" }}
-        className="relative mt-10"
+        transition={{ duration: 0.8 }}
+        className="mb-6 md:mb-10"
       >
-        <div className="rounded-full overflow-hidden w-48 h-48 border-4 border-accent/50 shadow-lg shadow-accent/20 mx-auto">
+        <div className="rounded-full overflow-hidden w-60 h-60 md:w-48 md:h-48 border-4 border-accent/40 shadow-md shadow-accent/10">
           <img
             src={heroImage2}
-            alt="Profile"
+            alt="Harrizon Lucas"
             className="w-full h-full object-cover"
           />
         </div>
       </motion.div>
 
-      {/* Text */}
+      {/* TEXT */}
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 35 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
-        className="flex flex-col justify-center items-center space-y-4 mt-6"
+        transition={{ duration: 0.8, delay: 0.15 }}
+        className="space-y-4 max-w-sm"
       >
-        <p className="text-accent font-mono tracking-wider">Hi, my name is</p>
-        <h1 className="text-5xl font-extrabold">
-          Harrizon <span className="text-accent">Lucas</span>
-        </h1>
-        <h2 className="text-2xl text-lightText/80 font-medium">
-          I build clean, scalable full-stack applications.
-        </h2>
-        <p className="text-lightText/60 max-w-xs">
-          I’m a developer who enjoys crafting performant and accessible web
-          experiences using Node, React, and PostgreSQL.
+        <p className="text-accent font-mono tracking-widest md:text-left">
+          Hi, I'm
         </p>
 
-        
+        <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+          Harrizon <span className="text-accent">Lucas</span>
+        </h1>
+
+        <h2 className="text-xl md:text-2xl text-lightText/80">
+          Full-Stack Developer
+        </h2>
+
+        <p className="text-lightText/70 leading-relaxed">
+          I build fast, reliable applications — combining full-stack engineering
+          with data-driven thinking to deliver clean, scalable systems.
+        </p>
       </motion.div>
 
-      {/* Bottom Navbar */}
+      {/* NAVIGATION */}
       <motion.nav
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
-        className="flex flex-col items-center space-y-4 mt-12 mb-10"
+        transition={{ duration: 0.8, delay: 0.4 }}
+        className="
+          flex mt-10 gap-6
+          md:flex-col md:gap-4 md:mt-12
+        "
       >
-        {navLinks.map(({ name, href }, i) => (
-          <motion.a
-            key={i}
+        {navLinks.map(({ name, href }) => (
+          <a
+            key={href}
             href={href}
             onClick={() => setActive(href)}
-            className={`font-mono uppercase tracking-widest transition-all ${
-              active === href
-                ? "text-accent text-base font-bold scale-110"
-                : "text-lightText/70 hover:text-accent text-sm"
-            }`}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            className={`
+              font-mono tracking-wider transition-all 
+              ${
+                active === href
+                  ? "text-accent font-semibold scale-[1.08]"
+                  : "text-lightText/60 hover:text-accent"
+              }
+            `}
           >
             {name}
-          </motion.a>
+          </a>
         ))}
       </motion.nav>
     </section>
