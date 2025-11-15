@@ -5,8 +5,9 @@ import heroImage2 from "../assets/myimage.jpg";
 const Hero = () => {
   const navLinks = [
     { name: "About", href: "#about" },
-    { name: "Tech Stack", href: "#TechStack" },
     { name: "Projects", href: "#projects" },
+    { name: "Tech Stack", href: "#TechStack" },
+    
     { name: "Contact", href: "#contact" },
   ];
 
@@ -15,19 +16,22 @@ const Hero = () => {
   // Track active section
   useEffect(() => {
     const handleScroll = () => {
-      const pos = window.scrollY + window.innerHeight / 3;
-      let current = "";
-      navLinks.forEach(({ href }) => {
-        const el = document.querySelector(href);
-        if (el && pos >= el.offsetTop) current = href;
-      });
-      setActive(current);
+      const scrollPos = window.scrollY + window.innerHeight / 3;
+
+      const currentSection = [...navLinks]
+        .reverse() // Ensure top-most visible section is selected
+        .find(({ href }) => {
+          const el = document.querySelector(href);
+          return el && scrollPos >= el.offsetTop;
+        });
+
+      setActive(currentSection ? currentSection.href : "");
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    handleScroll(); // initialize on mount
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [navLinks]);
 
   return (
     <section
@@ -45,7 +49,7 @@ const Hero = () => {
         transition={{ duration: 0.8 }}
         className="mb-6"
       >
-        <div className="rounded-full overflow-hidden w-48 h-48 md:w-52 md:h-52">
+        <div className="rounded-full overflow-hidden w-48 h-48 md:w-52 md:h-52 shadow-lg shadow-accent/20">
           <img
             src={heroImage2}
             alt="Harrizon Lucas"
@@ -74,12 +78,12 @@ const Hero = () => {
         </p>
       </motion.div>
 
-      {/* Navigation */}
+      {/* Navigation (Vertical) */}
       <motion.nav
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
-        className="flex flex-col items-center gap-4 mt-10"
+        className="flex flex-col items-center gap-4 mt-10 md:items-center"
       >
         {navLinks.map(({ name, href }) => (
           <a

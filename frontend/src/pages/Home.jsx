@@ -4,10 +4,16 @@ import TechStack from "../components/TechStack";
 import ProjectsPreview from "../components/ProjectsPreview";
 import Contact from "../components/contact";
 import Footer from "../components/Footer";
+import Squares from "../components/Squares";
 
 const Home = () => {
   return (
-    <div className="w-full min-h-screen">
+    <div className="relative w-full">
+      
+      {/* === GLOBAL SQUARES BACKGROUND === */}
+      <div className="fixed inset-0 -z-10 h-full">
+        <Squares />
+      </div>
 
       {/* === MOBILE LAYOUT === */}
       <div className="block md:hidden">
@@ -15,7 +21,7 @@ const Home = () => {
       </div>
 
       {/* === DESKTOP LEFT PANEL === */}
-      <div className="hidden md:block fixed left-0 top-0 h-screen w-[40%] overflow-y-auto ">
+      <div className="hidden md:block fixed left-0 top-0 h-screen w-[40%] overflow-y-auto">
         <LeftPanel />
       </div>
 
@@ -27,7 +33,6 @@ const Home = () => {
           px-4 sm:px-6 lg:px-12
           max-w-4xl
           mx-auto
-          overflow-x-hidden
         "
       >
         <About />
