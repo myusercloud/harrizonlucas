@@ -5,9 +5,9 @@ import SocialLinks from "./SocialLinks";
 
 const LeftPanel = () => {
   return (
-    <div className="hidden md:flex flex-col fixed top-0 left-0 h-screen w-[35%]  px-6 py-12">
-    
+    <div className="flex flex-col px-6 py-12 h-full">
       <Hero />
+
       <div className="mt-auto">
         <SocialLinks />
       </div>

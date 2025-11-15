@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FiArrowUpRight, FiEdit2, FiTrash2 } from "react-icons/fi";
 import SectionTitle from "./ui/sectionTitle";
 import MotionFadeIn from "./ui/MotionFadeIn";
@@ -10,24 +10,27 @@ const API_URL = "http://localhost:5000/api/projects";
 const ProjectManager = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
   const [form, setForm] = useState({ title: "", description: "", link: "", image: "" });
   const [editing, setEditing] = useState(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({});
+  const [modal, setModal] = useState(null);
+  const abortRef = useRef(null);
 
-  // Fetch all projects
+  /** Fetch Projects (Optimized) **/
   const fetchProjects = async () => {
     setLoading(true);
+
+    abortRef.current?.abort();
+    abortRef.current = new AbortController();
+
     try {
-      const res = await fetch(API_URL);
-      if (!res.ok) throw new Error("Failed to fetch projects");
+      const res = await fetch(API_URL, { signal: abortRef.current.signal });
+      if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
       setProjects(data);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
+    } catch (e) {
+      if (e.name !== "AbortError") {
+        setModal({ title: "Error", message: e.message, isAlert: true });
+      }
     } finally {
       setLoading(false);
     }
@@ -35,183 +38,180 @@ const ProjectManager = () => {
 
   useEffect(() => {
     fetchProjects();
+    return () => abortRef.current?.abort();
   }, []);
 
-  // Handle form input changes
-  const handleChange = (e) => {
+  /** Handle Inputs **/
+  const updateInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Reset form
   const resetForm = () => {
     setEditing(null);
     setForm({ title: "", description: "", link: "", image: "" });
   };
 
-  // Submit form (Create / Update)
+  /** Submit (Create / Edit) **/
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("description", form.description);
-      formData.append("link", form.link || "");
-      if (form.image && typeof form.image !== "string") {
-        formData.append("image", form.image); // only append if it's a new file
-      }
+      const fd = new FormData();
+      Object.entries(form).forEach(([k, v]) => {
+        if (k === "image" && typeof v === "string") return;
+        fd.append(k, v);
+      });
 
       const method = editing ? "PUT" : "POST";
       const url = editing ? `${API_URL}/${editing.slug}` : API_URL;
 
-      const res = await fetch(url, { method, body: formData });
-      if (!res.ok) throw new Error("Failed to save project");
+      const res = await fetch(url, { method, body: fd });
+      if (!res.ok) throw new Error("Saving project failed");
 
       resetForm();
       fetchProjects();
-    } catch (err) {
-      setModalContent({
-        title: "Error",
-        message: err.message,
-        confirmText: "Close",
-        onConfirm: () => setModalOpen(false),
-        isAlert: true,
-      });
-      setModalOpen(true);
+    } catch (e) {
+      setModal({ title: "Error", message: e.message, isAlert: true });
     }
   };
 
-  // Delete project
-  const handleDelete = (project) => {
-    setModalContent({
-      title: "Confirm Deletion",
-      message: `Are you sure you want to delete "${project.title}"?`,
+  /** Delete **/
+  const confirmDelete = (project) => {
+    setModal({
+      title: "Delete Project",
+      message: `Delete "${project.title}"?`,
       confirmText: "Delete",
-      cancelText: "Cancel",
-      confirmStyle: "bg-red-600 hover:bg-red-700",
+      confirmStyle: "bg-red-600",
       onConfirm: async () => {
         try {
           const res = await fetch(`${API_URL}/${project.slug}`, { method: "DELETE" });
-          if (!res.ok) throw new Error("Delete failed");
+          if (!res.ok) throw new Error("Failed to delete");
           fetchProjects();
-          setModalOpen(false);
-        } catch (err) {
-          setModalContent({
-            title: "Error",
-            message: err.message,
-            confirmText: "Close",
-            onConfirm: () => setModalOpen(false),
-            isAlert: true,
-          });
-          setModalOpen(true);
+        } catch (e) {
+          setModal({ title: "Error", message: e.message, isAlert: true });
+        } finally {
+          setModal(null);
         }
       },
-      onCancel: () => setModalOpen(false),
     });
-    setModalOpen(true);
   };
 
-  // Edit project
-  const handleEdit = (project) => {
-    setEditing(project);
+  /** Edit **/
+  const startEdit = (p) => {
+    setEditing(p);
     setForm({
-      title: project.title,
-      description: project.description,
-      link: project.link,
-      image: project.image || "",
+      title: p.title,
+      description: p.description,
+      link: p.link,
+      image: p.image || "",
     });
   };
 
-  if (loading) return <p className="text-center mt-12">Loading projects...</p>;
-  if (error) return <p className="text-center mt-12 text-red-500">{error}</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
 
   return (
-    <section className="py-12 px-6">
+    <section className="py-10 px-4 sm:px-6">
       <SectionTitle title="Project Manager" />
 
-      {/* Form */}
+      {/* FORM */}
       <form
         onSubmit={handleSubmit}
-        className="max-w-3xl mx-auto bg-gray-800 p-6 rounded-2xl mb-12 shadow-xl space-y-4"
+        className="max-w-3xl mx-auto bg-gray-800 p-5 sm:p-6 rounded-xl space-y-4 shadow-lg mb-10"
       >
-        <h2 className="text-xl font-semibold text-indigo-400">
-          {editing ? "Edit Project" : "Create New Project"}
+        <h2 className="text-lg font-semibold text-indigo-400">
+          {editing ? "Edit Project" : "New Project"}
         </h2>
 
         <input
-          type="text"
           name="title"
-          placeholder="Title"
+          placeholder="Project Title"
           value={form.title}
-          onChange={handleChange}
+          onChange={updateInput}
           required
-          className="w-full p-3 rounded-lg bg-gray-700 text-white"
+          className="w-full p-3 rounded-md bg-gray-700 text-white"
         />
+
         <textarea
           name="description"
           placeholder="Description"
           value={form.description}
-          onChange={handleChange}
-          rows={4}
-          className="w-full p-3 rounded-lg bg-gray-700 text-white"
+          onChange={updateInput}
+          rows={3}
+          className="w-full p-3 rounded-md bg-gray-700 text-white"
         />
+
         <input
-          type="url"
           name="link"
           placeholder="Project Link (optional)"
           value={form.link}
-          onChange={handleChange}
-          className="w-full p-3 rounded-lg bg-gray-700 text-white"
-        />
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
-          className="w-full p-3 rounded-lg bg-gray-700 text-white"
+          onChange={updateInput}
+          className="w-full p-3 rounded-md bg-gray-700 text-white"
         />
 
-        {/* Image Preview */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+          className="w-full p-3 rounded-md bg-gray-700 text-white"
+        />
+
         {form.image && typeof form.image !== "string" && (
           <img
             src={URL.createObjectURL(form.image)}
+            className="rounded-lg h-40 object-cover"
             alt="Preview"
-            className="mb-4 rounded-xl h-48 object-cover"
           />
         )}
 
-        <div className="flex gap-4">
-          <Button type="submit">{editing ? "Update Project" : "Create Project"}</Button>
+        <div className="flex gap-3">
+          <Button type="submit">
+            {editing ? "Update" : "Create"}
+          </Button>
           {editing && (
-            <button type="button" onClick={resetForm} className="px-6 py-2 rounded-lg bg-gray-600 text-white">
+            <button
+              type="button"
+              onClick={resetForm}
+              className="px-5 py-2 bg-gray-600 rounded-md"
+            >
               Cancel
             </button>
           )}
         </div>
       </form>
 
-      {/* Projects Grid */}
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
-        {projects.map((project, i) => (
-          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.05}>
-            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col justify-between h-full">
-              {project.image && (
-                <img src={`http://localhost:5000${project.image}`} alt={project.title} className="mb-4 rounded-xl h-48 object-cover" />
+      {/* GRID */}
+      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {projects.map((p, i) => (
+          <MotionFadeIn key={i} direction="up" delay={i * 0.05}>
+            <div className="bg-gray-800 p-5 rounded-xl shadow-md flex flex-col">
+              {p.image && (
+                <img
+                  src={`http://localhost:5000${p.image}`}
+                  loading="lazy"
+                  className="rounded-lg h-44 w-full object-cover"
+                  alt={p.title}
+                />
               )}
 
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold text-indigo-400">{project.title}</h3>
-                <p className="mt-2 text-gray-300">{project.description}</p>
-              </div>
+              <h3 className="text-xl mt-4 text-indigo-400">{p.title}</h3>
+              <p className="text-gray-300 mt-1">{p.description}</p>
 
-              <div className="mt-4 flex justify-between items-center">
-                <Button href={project.link || "#"} icon={FiArrowUpRight} variant="outline">
+              <div className="flex justify-between items-center mt-4">
+                <Button href={p.link || "#"} icon={FiArrowUpRight} variant="outline">
                   View
                 </Button>
+
                 <div className="flex gap-2">
-                  <button onClick={() => handleEdit(project)} className="p-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700">
+                  <button
+                    onClick={() => startEdit(p)}
+                    className="p-2 bg-blue-600 text-white rounded-md"
+                  >
                     <FiEdit2 />
                   </button>
-                  <button onClick={() => handleDelete(project)} className="p-2 bg-red-600 rounded-lg text-white hover:bg-red-700">
+
+                  <button
+                    onClick={() => confirmDelete(p)}
+                    className="p-2 bg-red-600 text-white rounded-md"
+                  >
                     <FiTrash2 />
                   </button>
                 </div>
@@ -221,17 +221,20 @@ const ProjectManager = () => {
         ))}
       </div>
 
-      <ConfirmationModal
-        isOpen={modalOpen}
-        title={modalContent.title}
-        message={modalContent.message}
-        onConfirm={modalContent.onConfirm}
-        onCancel={modalContent.onCancel}
-        confirmText={modalContent.confirmText}
-        cancelText={modalContent.cancelText}
-        isAlert={modalContent.isAlert}
-        confirmStyle={modalContent.confirmStyle}
-      />
+      {/* MODAL */}
+      {modal && (
+        <ConfirmationModal
+          isOpen={true}
+          title={modal.title}
+          message={modal.message}
+          confirmText={modal.confirmText}
+          cancelText={modal.cancelText}
+          confirmStyle={modal.confirmStyle}
+          isAlert={modal.isAlert}
+          onConfirm={modal.onConfirm}
+          onCancel={() => setModal(null)}
+        />
+      )}
     </section>
   );
 };

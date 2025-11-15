@@ -4,30 +4,51 @@ import MotionFadeIn from "./ui/MotionFadeIn";
 import Button from "./ui/Button";
 import { FiArrowUpRight } from "react-icons/fi";
 
+const API_URL = "http://localhost:5000/api/projects";
+
 const ProjectsPreview = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Optimised fetch
+  const loadProjects = async () => {
+    try {
+      const res = await fetch(API_URL);
+      if (!res.ok) throw new Error("Failed to load projects");
+
+      const data = await res.json();
+      setProjects(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    fetch("http://localhost:5000/api/projects")
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch projects");
-        return res.json();
-      })
-      .then((data) => {
-        setProjects(data); 
-        setLoading(false);  
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err.message);
-        setLoading(false);
-      });
+    loadProjects();
   }, []);
 
-  if (loading) return <p className="text-center mt-12">Loading projects...</p>;
-  if (error) return <p className="text-center mt-12 text-red-500">{error}</p>;
+  if (loading)
+    return (
+      <section className="py-20 px-4 sm:px-6">
+        <SectionTitle title="Projects" />
+        <div className="max-w-6xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="animate-pulse h-24 bg-gray-800 rounded-lg"
+            ></div>
+          ))}
+        </div>
+      </section>
+    );
+
+  if (error)
+    return (
+      <p className="text-center mt-12 text-red-500 font-medium">{error}</p>
+    );
 
   return (
     <section id="projects" className="py-20 px-4 sm:px-6 text-left">
@@ -35,25 +56,27 @@ const ProjectsPreview = () => {
 
       <div className="max-w-6xl mx-auto mt-10 grid grid-cols-1 sm:grid-cols-2 gap-8">
         {projects.map((project, i) => (
-          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.08}>
-            <div className="group flex flex-col sm:flex-row items-start gap-4 border-b border-gray-800 pb-6 hover:opacity-90 transition-all duration-300">
-              
-              {/* Image */}
+          <MotionFadeIn key={project.id || i} direction="up" delay={i * 0.06}>
+            <div className="group flex items-start gap-4 border-b border-gray-800 pb-6 hover:opacity-90 transition-all duration-300">
+
+              {/* Thumbnail */}
               {project.image && (
-                <div className="w-full sm:w-1/5 md:w-1/6 overflow-hidden rounded-md flex-shrink-0">
+                <div className="w-20 sm:w-24 md:w-28 flex-shrink-0 rounded-lg overflow-hidden">
                   <img
                     src={`http://localhost:5000${project.image}`}
                     alt={project.title}
-                    className="object-cover w-full h-20 sm:h-24 md:h-24 rounded-md transition duration-500"
+                    loading="lazy"
+                    className="object-cover w-full h-full rounded-md"
                   />
                 </div>
               )}
 
-              {/* Info */}
+              {/* Text */}
               <div className="flex-1">
-                <h3 className="text-base font-semibold text-green-400 group-hover:text-green-300 transition-colors duration-300">
+                <h3 className="text-sm sm:text-base font-semibold text-green-400 group-hover:text-green-300 transition-colors">
                   {project.title}
                 </h3>
+
                 <p className="mt-1 text-gray-400 text-sm leading-snug line-clamp-2">
                   {project.description}
                 </p>
@@ -62,7 +85,7 @@ const ProjectsPreview = () => {
                   <Button
                     variant="link"
                     icon={FiArrowUpRight}
-                    className="text-xs text-white-400  hover:underline py-1 px-2"
+                    className="text-xs text-black/80 hover:underline"
                     onClick={() => window.open(project.link || "#", "_blank")}
                   >
                     View Project
