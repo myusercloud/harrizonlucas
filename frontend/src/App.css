@@ -40,3 +40,95 @@
 .read-the-docs {
   color: #888;
 }
+.fade-in {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.7s ease forwards;
+}
+
+.fade-in-delayed {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeIn 0.7s ease forwards 0.2s;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.squares-bg {
+position: fixed;
+inset: 0;
+z-index: -10;
+pointer-events: none; /* never capture mouse events */
+background-color: #050014; /* base */
+
+
+/* grid lines (two layered gradients: vertical + horizontal) */
+background-image:
+linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+
+
+/* subtle larger squares (fainter) */
+linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px),
+
+
+/* soft radial vignette on top */
+radial-gradient(ellipse at center, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%);
+
+
+/* sizes for the layered gradients (smaller grid + larger sub-grid) */
+background-size: 32px 32px, 32px 32px, 160px 160px, 160px 160px, cover;
+
+
+/* compose starting positions to allow motion across axes */
+background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, center;
+
+
+/* animate the grid movement slowly for a subtle parallax effect */
+animation: grid-move 28s linear infinite, grid-pulse 6s ease-in-out infinite;
+will-change: background-position; /* hint to the browser */
+mix-blend-mode: normal;
+}
+
+
+/* subtle movement across both axes */
+@keyframes grid-move {
+from {
+background-position: 0px 0px, 0px 0px, 0px 0px, 0px 0px, center;
+}
+to {
+background-position: -160px 80px, 160px -80px, -40px 20px, 40px -20px, center;
+}
+}
+
+
+/* gentle opacity pulse so the background breathes */
+@keyframes grid-pulse {
+0%, 100% { opacity: 1; }
+50% { opacity: 0.92; }
+}
+
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+.squares-bg {
+animation: none;
+}
+}
+
+
+/* Slightly reduce visuals on very small screens to lower paint cost */
+@media (max-width: 640px) {
+.squares-bg {
+background-size: 28px 28px, 28px 28px, 140px 140px, 140px 140px, cover;
+animation-duration: 36s, 8s;
+}
+}
+

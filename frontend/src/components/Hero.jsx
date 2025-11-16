@@ -7,40 +7,33 @@ const Hero = () => {
     { name: "About", href: "#about" },
     { name: "Projects", href: "#projects" },
     { name: "Tech Stack", href: "#TechStack" },
-    
     { name: "Contact", href: "#contact" },
   ];
 
   const [active, setActive] = useState("");
 
-  // Track active section
+  // Scroll-based active tracking
   useEffect(() => {
     const handleScroll = () => {
       const scrollPos = window.scrollY + window.innerHeight / 3;
-
       const currentSection = [...navLinks]
-        .reverse() // Ensure top-most visible section is selected
+        .reverse()
         .find(({ href }) => {
           const el = document.querySelector(href);
           return el && scrollPos >= el.offsetTop;
         });
-
       setActive(currentSection ? currentSection.href : "");
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // initialize on mount
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [navLinks]);
 
   return (
     <section
       id="hero"
-      className="
-        w-full px-6 py-10
-        flex flex-col justify-center items-center text-center
-        md:justify-center md:items-center
-      "
+      className="w-full px-6 py-10 flex flex-col justify-center items-center text-center"
     >
       {/* Profile Image */}
       <motion.div
@@ -58,7 +51,7 @@ const Hero = () => {
         </div>
       </motion.div>
 
-      {/* Text Content */}
+      {/* Text */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -78,26 +71,22 @@ const Hero = () => {
         </p>
       </motion.div>
 
-      {/* Navigation (Vertical) */}
+      {/* Vertical Nav */}
       <motion.nav
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.3 }}
-        className="flex flex-col items-center gap-4 mt-10 md:items-center"
+        className="flex flex-col items-center gap-4 mt-10"
       >
         {navLinks.map(({ name, href }) => (
           <a
             key={href}
             href={href}
-            onClick={() => setActive(href)}
-            className={`
-              font-mono tracking-wider transition-all
-              ${
-                active === href
-                  ? "text-accent font-semibold scale-105"
-                  : "text-lightText/60 hover:text-accent"
-              }
-            `}
+            className={`font-mono tracking-wider transition-all ${
+              active === href
+                ? "text-accent font-semibold scale-105"
+                : "text-lightText/60 hover:text-accent"
+            }`}
           >
             {name}
           </a>
