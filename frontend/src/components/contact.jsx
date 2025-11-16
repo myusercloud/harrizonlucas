@@ -26,7 +26,7 @@ const Contact = () => {
           </Button>
 
           <Button
-            href="https://linkedin.com/in/harrizon"
+            href="https://linkedin.com/in/harrizon-lucas"
             variant="outline"
             icon={FiLinkedin}
           >
