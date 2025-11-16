@@ -10,9 +10,10 @@ const SectionTitle = ({ title }) => {
       className="flex items-center gap-4 mb-12 justify-start"
     >
       {/* Title Text */}
-      <h2 className="text-2xl md:text-3xl font-bold text-lightText whitespace-nowrap">
-        {title}
-      </h2>
+      <h2 className="text-3xl md:text-5xl font-bold text-lightText whitespace-nowrap">
+  {title}
+</h2>
+
 
       {/* Decorative Line */}
       <div className="hidden md:block h-[1px] flex-grow bg-lightText/20"></div>
