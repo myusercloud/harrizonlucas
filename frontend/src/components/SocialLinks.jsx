@@ -2,9 +2,9 @@ import React from "react";
 import { FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 const socials = [
-  { icon: <FaGithub size={22} />, link: "https://github.com/harrizon" },
-  { icon: <FaLinkedin size={22} />, link: "https://linkedin.com/in/harrizon" },
-  { icon: <FaTwitter size={22} />, link: "https://twitter.com/harrizon" },
+  { icon: <FaGithub size={22} />, link: "https://github.com/myusercloud" },
+  { icon: <FaLinkedin size={22} />, link: "https://linkedin.com/in/harrizon-lucas" },
+  { icon: <FaTwitter size={22} />, link: "https://twitter.com/harryzon_ke" },
 ];
 
 const SocialLinks = () => {
