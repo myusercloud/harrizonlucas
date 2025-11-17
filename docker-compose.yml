@@ -1,53 +1,37 @@
+version: "3.9"
+
 services:
-  portfolio_db:
+  db:
     image: postgres:15
-    container_name: portfolio_db
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: portfolio
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  portfolio_backend:
-    build: ./backend
-    container_name: portfolio_backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     restart: always
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/portfolio
+    depends_on:
+      - db
     ports:
       - "5000:5000"
-      - "5555:5555"
-    env_file:
-      - ./backend/.env
-    depends_on:
-      - portfolio_db
-    volumes:
-      - ./backend:/app                # Mount backend source
-      - /app/node_modules             # Prevent node_modules from being overwritten
-      - ./backend/uploads:/app/uploads
-    working_dir: /app
-    command: ["sh", "-c", "./start.sh"]
 
-
-  portfolio_frontend:
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: portfolio_frontend
     restart: always
-    ports:
-      - "5173:5173"
     depends_on:
-      - portfolio_backend
-    volumes:
-      - ./frontend:/app               # Mount frontend source code
-      - /app/node_modules             # Ignore node_modules from host
-    working_dir: /app
-    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-    environment:
-      - CHOKIDAR_USEPOLLING=true      # ensures file watching works inside Docker
+      - backend
+    ports:
+      - "80:80"
 
 volumes:
   pgdata:
